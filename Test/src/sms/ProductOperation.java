@@ -60,10 +60,6 @@ public class ProductOperation
 	private JComboBox<String> cbColorID;
 	private JButton btnClose;
 	private JButton btnSave;
-	//連接資料庫
-	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-	private String username = "root";
-	private String password = "1234";
 	
 	// 沒傳參數 用來新增產品資訊
 	public ProductOperation() 
@@ -71,11 +67,9 @@ public class ProductOperation
 		initProductFrame();
 		try 
 		{
-	        Connection conn = DriverManager.getConnection(url, username, password);
-
 	        // 查詢客戶總數
 	        String sql = "SELECT COUNT(*) AS total_products FROM product";
-	        PreparedStatement countStmt = conn.prepareStatement(sql);
+	        PreparedStatement countStmt = Overview.conn.prepareStatement(sql);
 	        ResultSet rs = countStmt.executeQuery();
 	        
 	        int nextProductID = 1; // 預設客戶編號從 1 開始
@@ -91,7 +85,6 @@ public class ProductOperation
 	        // 關閉資源
 	        rs.close();
 	        countStmt.close();
-	        conn.close();
 	        
 	    } 
 		catch (SQLException e) 
@@ -114,13 +107,11 @@ public class ProductOperation
                     return;
         	    }
             	try 
-            	{
-            		
-					Connection conn = DriverManager.getConnection(url, username, password);
+            	{         		
 					String sql = "INSERT INTO product (yarn_specification, yarn_lot_num, single_grain_weight, suplier, color_id)"
 								+"VALUES (?, ?, ?, ?, ?);";
 						
-					PreparedStatement stmt = conn.prepareStatement(sql);
+					PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 					
 					stmt.setString(1, yarnSpecification);
 					stmt.setString(2, yarnLotNum);
@@ -136,7 +127,6 @@ public class ProductOperation
 					
 					stmt.executeUpdate();
 					stmt.close();
-			        conn.close();
 			        frame.dispose();
 				} 
             	catch (SQLException e1) 
@@ -177,13 +167,12 @@ public class ProductOperation
         	    }
 		        try 
 		        {
-		            Connection conn = DriverManager.getConnection(url, username, password);
 		            
 		            // 修改客戶資料的SQL語句
 		            String sql = "UPDATE product SET yarn_specification = ?, yarn_lot_num = ?, single_grain_weight = ?, suplier = ?, color_id = ?"
 		            		    +"WHERE id = ?;";
 		            
-		            PreparedStatement stmt = conn.prepareStatement(sql);
+		            PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 		            stmt.setString(1, yarnSpecification);
 					stmt.setString(2, yarnLotNum);	
 					if (!singleGrainWeight.isBlank()) 
@@ -199,8 +188,6 @@ public class ProductOperation
 					
 		            stmt.executeUpdate();
 		            stmt.close();
-		            conn.close();
-		            
 		            // 關閉當前視窗
 		            frame.dispose();
 		            
@@ -361,11 +348,9 @@ public class ProductOperation
 	    List<String> allColorID = new ArrayList<>();  // 用於儲存所有的色號
 	    try 
 	    {
-	        Connection conn = DriverManager.getConnection(url, username, password);
-	        
 	        // SQL 查詢語句
 	        String sql = "SELECT `id` FROM color";
-	        PreparedStatement stmt = conn.prepareStatement(sql);
+	        PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	        ResultSet rs = stmt.executeQuery();
 	        allColorID.add("");
 	        // 將所有查詢結果加入到 allColorID 列表中
@@ -377,7 +362,6 @@ public class ProductOperation
 	        // 關閉資源
 	        rs.close();
 	        stmt.close();
-	        conn.close();
 	    } 
 	    catch (SQLException e) 
 	    {

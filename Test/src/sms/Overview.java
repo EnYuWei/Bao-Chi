@@ -1,5 +1,9 @@
 package sms;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -15,8 +19,22 @@ public class Overview
 	private JPanel colorManagement;
 	private JPanel machineManagement;
 	private JPanel manufacturingOrderManagement;
+	// 資料庫
+	public static String url;
+	public static String username;
+	public static String password;
+	public static Connection conn;
 	public Overview()
 	{
+		url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
+		username = "root";
+		password = "1234";
+		try {
+			conn = DriverManager.getConnection(url, username, password);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//視窗
 		frame = new JFrame("排程管理系統");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,40 +73,7 @@ public class Overview
 		
 		// 設定預設選中的選項卡
 		tbp.setSelectedIndex(0);
-		order.startTimer(); 
-		// 偵測選項卡變更事件
-		tbp.addChangeListener(new ChangeListener() 
-		{
-		    @Override
-		    public void stateChanged(ChangeEvent e) 
-		    {
-		        int selectedIndex = tbp.getSelectedIndex();
-		        String selectedTab = tbp.getTitleAt(selectedIndex);
-
-		        switch (selectedTab) 
-		        {
-		            case "訂單管理":
-		                order.startTimer();  // 啟動訂單計時器
-		                break;
-		            case "客戶管理":
-		                client.startTimer();  // 啟動客戶計時器
-		                break;
-		            case "產品管理":
-		                product.startTimer(); // 啟動產品計時器
-		                break;
-		            case "顏色管理":
-		                color.startTimer(); // 啟動顏色計時器		                
-		                break;
-		            default:
-		                // 如果選擇任何選項卡，可以選擇停止所有計時器
-		                order.stopTimer();
-		                client.stopTimer();
-		                product.stopTimer();
-		                color.stopTimer();
-		                break;
-		        }
-		    }
-		});
+		
 		
 		
 		frame.setVisible(true);

@@ -37,10 +37,6 @@ public class ClientOperation
 	private JScrollPane scrollPane;
 	private JButton btnClose;
 	private JButton btnSave;
-	//連接資料庫
-	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-	private String username = "root";
-	private String password = "1234";
 	
 	// 沒有傳參數 用來新增客戶資料
 	public ClientOperation() 
@@ -48,11 +44,10 @@ public class ClientOperation
 		initClientFrame();
 		try 
 		{
-	        Connection conn = DriverManager.getConnection(url, username, password);
 
 	        // 查詢客戶總數
 	        String sql = "SELECT COUNT(*) AS total_clients FROM client";
-	        PreparedStatement countStmt = conn.prepareStatement(sql);
+	        PreparedStatement countStmt = Overview.conn.prepareStatement(sql);
 	        ResultSet rs = countStmt.executeQuery();
 	        
 	        int nextClientID = 1; // 預設客戶編號從 1 開始
@@ -68,7 +63,6 @@ public class ClientOperation
 	        // 關閉資源
 	        rs.close();
 	        countStmt.close();
-	        conn.close();
 	        
 	    } 
 		catch (SQLException e) 
@@ -94,10 +88,9 @@ public class ClientOperation
             	try 
             	{
             		
-					Connection conn = DriverManager.getConnection(url, username, password);
 					String sql = "INSERT INTO client (unified_number, name, contact_person, contact_phone, email, address) VALUES (?, ?, ?, ?, ?, ?);";
 						
-					PreparedStatement stmt = conn.prepareStatement(sql);
+					PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 					
 					stmt.setString(1, unifiedNumber);
 					stmt.setString(2, client);
@@ -107,9 +100,7 @@ public class ClientOperation
 					stmt.setString(6, address);
 					stmt.executeUpdate();
 					stmt.close();
-			        conn.close();
 			        frame.dispose();
-//			        client.updateTable();
 				} 
             	catch (SQLException e1) 
             	{
@@ -146,12 +137,11 @@ public class ClientOperation
 
 		        try 
 		        {
-		            Connection conn = DriverManager.getConnection(url, username, password);
 		            
 		            // 修改客戶資料的SQL語句
 		            String sql = "UPDATE client SET unified_number = ?, name = ?, contact_person = ?, contact_phone = ?, email = ?, address = ? WHERE id = ?;";
 		            
-		            PreparedStatement stmt = conn.prepareStatement(sql);
+		            PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 		            stmt.setString(1, unifiedNumber);
 		            stmt.setString(2, client);
 		            stmt.setString(3, contactPerson);
@@ -162,7 +152,6 @@ public class ClientOperation
 		            
 		            stmt.executeUpdate();
 		            stmt.close();
-		            conn.close();
 		            
 		            // 關閉當前視窗
 		            frame.dispose();

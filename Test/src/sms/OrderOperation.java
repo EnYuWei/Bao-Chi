@@ -95,10 +95,6 @@ public class OrderOperation
 	private JScrollPane spTable;
 	private JScrollPane spFrame;
 	private JPanel buttonPanel;
-	//連接資料庫
-	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-	private String username = "root";
-	private String password = "1234";
 
 	// 沒傳參數新增訂單
 	public OrderOperation() 
@@ -115,9 +111,8 @@ public class OrderOperation
             
             defaultOrderID = sdf.format(today.getTime());
             
-			Connection conn = DriverManager.getConnection(url, username, password);
 			String sql = "SELECT  COUNT(o.id) AS '當日訂單數'  FROM `order` AS o WHERE order_date = CURDATE();";
-			PreparedStatement stmt = conn.prepareStatement(sql);
+			PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();
 			// 根據下單日期取得當日訂單數，並計算最新的訂單編號。例如: 2024100201 西元年月日+兩位流水號
 			if (rs.next()) 
@@ -150,8 +145,8 @@ public class OrderOperation
         tfOrderDate.setText(sdf.format(new Date()));
         
         // 建議字詞
-		SuggestionTool sugSales = new SuggestionTool("`order`","sales", url, username, password);
-		SuggestionTool sugDeliveryAddress = new SuggestionTool("`order`","delivery_address", url, username, password);
+		SuggestionTool sugSales = new SuggestionTool("`order`","sales", Overview.url, Overview.username, Overview.password);
+		SuggestionTool sugDeliveryAddress = new SuggestionTool("`order`","delivery_address", Overview.url, Overview.username, Overview.password);
 		sugSales.addTextComponent(tfSales);
 		sugDeliveryAddress.addTextComponent(taDeliveryAddress);
 		//
@@ -187,12 +182,10 @@ public class OrderOperation
         JComboBox<String> cbProductID = new JComboBox<>();
         List<String> allProductID = new ArrayList<>();  // 用於儲存所有的產品編號
         try 
-	    {
-	        Connection conn = DriverManager.getConnection(url, username, password);
-	        
+	    {	        
 	        // SQL 查詢語句
 	        String sql = "SELECT `id` FROM product";
-	        PreparedStatement stmt = conn.prepareStatement(sql);
+	        PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	        ResultSet rs = stmt.executeQuery();
 	        allProductID.add("");
 	        // 將所有查詢結果加入到 allColorID 列表中
@@ -204,7 +197,6 @@ public class OrderOperation
 	        // 關閉資源
 	        rs.close();
 	        stmt.close();
-	        conn.close();
 	    } 
 	    catch (SQLException e) 
 	    {
@@ -233,10 +225,10 @@ public class OrderOperation
                 // 檢查是否選中了有效的行
                 if (selectedRow >= 0) {
                     if (selectedProductID != null && !selectedProductID.isBlank()) {
-                        try {
-                            Connection conn = DriverManager.getConnection(url, username, password);
+                        try 
+                        {
                             String sql = "SELECT color_id, yarn_specification, yarn_lot_num FROM product WHERE id = ?";
-                            PreparedStatement stmt = conn.prepareStatement(sql);
+                            PreparedStatement stmt = Overview.conn.prepareStatement(sql);
                             stmt.setString(1, selectedProductID);
 
                             ResultSet rs = stmt.executeQuery();
@@ -249,7 +241,6 @@ public class OrderOperation
 
                             rs.close();
                             stmt.close();
-                            conn.close();
                         } catch (SQLException e1) {
                             e1.printStackTrace();
                         }
@@ -368,8 +359,7 @@ public class OrderOperation
 	            // 新增至資料庫
 	            try 
 	            {
-	                Connection conn = DriverManager.getConnection(url, username, password);
-	                conn.setAutoCommit(false);  // 關閉自動提交，啟用交易
+	            	Overview.conn.setAutoCommit(false);  // 關閉自動提交，啟用交易
 	
 	                try 
 	                {
@@ -389,7 +379,7 @@ public class OrderOperation
 	                                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 	
 	                    // 準備 SQL 語句
-	                    PreparedStatement stmtOrder = conn.prepareStatement(sqlOrder);
+	                    PreparedStatement stmtOrder = Overview.conn.prepareStatement(sqlOrder);
 	                    stmtOrder.setString(1, orderID);
 	                    stmtOrder.setString(2, status);
 	                    stmtOrder.setString(3, sales);
@@ -421,7 +411,7 @@ public class OrderOperation
 	                    // 新增訂單產品資料
 	                    String sqlDetail = "INSERT INTO `order_product` (`order_id`, product_id, weight, grains, subtotal, light_source, post_process, remark) "
 	                                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-	                    PreparedStatement stmtOrderProduct = conn.prepareStatement(sqlDetail);
+	                    PreparedStatement stmtOrderProduct = Overview.conn.prepareStatement(sqlDetail);
 	
 	                    for (String[] rowData : filteredDataList) {
 	                        stmtOrderProduct.setString(1, orderID);  // 設定訂單編號
@@ -476,7 +466,7 @@ public class OrderOperation
 	                    stmtOrderProduct.executeBatch();
 	
 	                    // 如果所有操作成功，提交交易
-	                    conn.commit();
+	                    Overview.conn.commit();
 	                    OptionPaneTool.showMessageDialog(JOptionPane.INFORMATION_MESSAGE, "訂單資料新增成功！", "確認");
 	                    
 	                    frame.dispose();
@@ -484,15 +474,12 @@ public class OrderOperation
 	                } 
 	                catch (SQLException e1) {
 	                    // 捕獲 SQL 錯誤，進行回滾操作
-	                    conn.rollback();
+	                	Overview.conn.rollback();
 	                    e1.printStackTrace();
 	                    OptionPaneTool.showMessageDialog(JOptionPane.ERROR_MESSAGE, "資料庫操作錯誤: " + e1.getMessage(), "確認");
 	                } 
 	                finally {
-	                    conn.setAutoCommit(true);  // 恢復自動提交模式
-	                    if (conn != null) {
-	                        conn.close();  // 關閉連線
-	                    }
+	                	Overview.conn.setAutoCommit(true);  // 恢復自動提交模式
 	                }
 	
 	            } 
@@ -547,12 +534,11 @@ public class OrderOperation
 		cbProcessStatus.addItem("取消");
 	    try 
 	    {
-	    	Connection conn = DriverManager.getConnection(url, username, password);
 	    	String sql = "SELECT "
 	    			    +"	o.`id`, o.`status`, o.`sales`, o.`amount_payable`, o.`order_date`, o.`ETA`, o.`ATA`, o.`delivery_address`, o.`middlemen`, o.`client_id` "
 	    			    +"FROM `order` AS o "
 	    			    +"WHERE  o.id = ?; ";
-	        PreparedStatement stmt = conn.prepareStatement(sql);
+	        PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	        stmt.setString(1, orderId);
 	        ResultSet rs = stmt.executeQuery(); 
 	        if(rs.next())
@@ -580,14 +566,13 @@ public class OrderOperation
 	    List<Object[]> dataList = new ArrayList<>();
 	    try 
 	    {
-	    	Connection conn = DriverManager.getConnection(url, username, password);
 	    	String sql = "SELECT"
 	    			    +"	op.product_id AS '產品編號', p.color_id AS '色號', p.yarn_specification AS '紗線規格', p.yarn_lot_num AS '紗線批號', weight AS '重量', grains AS '粒數', subtotal AS '小計', light_source AS '對色光源', post_process AS '後處理方式', remark AS '備註' "
 	    				+"FROM `order_product` AS op "
 	    				+"JOIN product AS p ON  op.product_id = p.id "
 	    				+"WHERE op.`order_id` = ? "
 	    				+"GROUP BY op.product_id  ;";
-	        PreparedStatement stmt = conn.prepareStatement(sql);
+	        PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	        stmt.setString(1, orderId);
 	        ResultSet rs = stmt.executeQuery(); 
 	        int itemNum = 1;
@@ -716,12 +701,11 @@ public class OrderOperation
 	            // 新增至資料庫
 	            try 
 	            {
-	                Connection conn = DriverManager.getConnection(url, username, password);
-	                conn.setAutoCommit(false);  // 關閉自動提交，啟用交易
+	            	Overview.conn.setAutoCommit(false);  // 關閉自動提交，啟用交易
 	                // 修改訂單資料
 	                try 
 	                {
-	                	conn.setAutoCommit(false);  // 關閉自動提交，啟用交易
+	                	Overview.conn.setAutoCommit(false);  // 關閉自動提交，啟用交易
 	                    // 取得欄位輸入
 	                    String orderID = tfOrderID.getText().trim();
 	                    String status = (String) cbProcessStatus.getSelectedItem();
@@ -735,7 +719,7 @@ public class OrderOperation
 	                    				+ "WHERE id = ? ;";
 	
 	                    // 準備 SQL 語句
-	                    PreparedStatement stmtOrder = conn.prepareStatement(sqlOrder);
+	                    PreparedStatement stmtOrder = Overview.conn.prepareStatement(sqlOrder);
 	                    
 	                    stmtOrder.setString(1, status);
 	                    // 金額如果為 null 則插入空值
@@ -763,7 +747,7 @@ public class OrderOperation
 	                    // 修改訂單產品資料
 	                    String sqlDetail = "UPDATE  `order_product` SET weight = ?, grains = ?, subtotal = ?, light_source = ?, post_process = ?, remark = ?  "
 	                                     + "WHERE  order_id = ? AND product_id = ?  ;";
-	                    PreparedStatement stmtOrderProduct = conn.prepareStatement(sqlDetail);
+	                    PreparedStatement stmtOrderProduct = Overview.conn.prepareStatement(sqlDetail);
 	
 	                    for (String[] rowData : filteredDataList) 
 	                    {
@@ -820,21 +804,18 @@ public class OrderOperation
 	                    stmtOrderProduct.executeBatch();
 	
 	                    // 如果所有操作成功，提交交易
-	                    conn.commit();
+	                    Overview.conn.commit();
 	                    OptionPaneTool.showMessageDialog(JOptionPane.INFORMATION_MESSAGE, "訂單資料修改成功！", "確認");
 	                    
 	                } 
 	                catch (SQLException e1) {
 	                    // 捕獲 SQL 錯誤，進行回滾操作
-	                    conn.rollback();
+	                	Overview.conn.rollback();
 	                    e1.printStackTrace();
 	                    OptionPaneTool.showMessageDialog(JOptionPane.ERROR_MESSAGE, "資料庫操作錯誤: " + e1.getMessage(), "確認");
 	                } 
 	                finally {
-	                    conn.setAutoCommit(true);  // 恢復自動提交模式
-	                    if (conn != null) {
-	                        conn.close();  // 關閉連線
-	                    }
+	                	Overview.conn.setAutoCommit(true);  // 恢復自動提交模式
 	                }
 	
 	            } 
@@ -1240,11 +1221,9 @@ public class OrderOperation
 	    List<String> allClientID = new ArrayList<>();  // 用於儲存所有的客戶編號
 	    try 
 	    {
-	        Connection conn = DriverManager.getConnection(url, username, password);
-	        
 	        // SQL 查詢語句
 	        String sql = "SELECT `id` FROM client";
-	        PreparedStatement stmt = conn.prepareStatement(sql);
+	        PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	        ResultSet rs = stmt.executeQuery();
 	        allClientID.add("");
 	        // 將所有查詢結果加入到 allColorID 列表中
@@ -1256,7 +1235,6 @@ public class OrderOperation
 	        // 關閉資源
 	        rs.close();
 	        stmt.close();
-	        conn.close();
 	    } 
 	    catch (SQLException e) 
 	    {
@@ -1310,9 +1288,8 @@ public class OrderOperation
 	            {
 	            	try 
 	            	{
-	                    Connection conn = DriverManager.getConnection(url, username, password);
 	                    String sql = "SELECT unified_number, name, contact_person, contact_phone, email, address FROM client WHERE id = ?";
-	                    PreparedStatement stmt = conn.prepareStatement(sql);
+	                    PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	                    stmt.setString(1, selectedClientID);
 	                    
 	                    ResultSet rs = stmt.executeQuery();
@@ -1329,7 +1306,6 @@ public class OrderOperation
 
 	                    rs.close();
 	                    stmt.close();
-	                    conn.close();
 	                } 
 	            	catch (SQLException e1) {
 	                    e1.printStackTrace();

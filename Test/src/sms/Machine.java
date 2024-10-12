@@ -33,10 +33,7 @@ public class Machine
 	private RoundedButton btnA;
 	private RoundedButton btnB;
 	private RoundedButton btnC;
-	//連接資料庫
-	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-	private String username = "root";
-	private String password = "1234";
+	
 	public Machine() 
 	{
 		// 主框架
@@ -214,8 +211,7 @@ public class Machine
 	{
 		cardPanel.removeAll();
         try 
-        {
-        	Connection conn = DriverManager.getConnection(url, username, password);       
+        {    
             String sql = "SELECT "
             			+"	m.machine_code, m.status, TIME_FORMAT(m.remaining_time, '%H:%i:%s') AS remaining_time,"
             			+"  m.current_usage, c.L, c.C, c.H, m.group "
@@ -223,7 +219,7 @@ public class Machine
             			+ "LEFT JOIN color AS c ON m.current_color = c.id "  // 使用 LEFT JOIN，因為色號可能為空。
             			+"WHERE m.group = ? "
             			+"ORDER BY m.machine_code; ";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = Overview.conn.prepareStatement(sql);
             stmt.setString(1, group); // 使用 PreparedStatement 設置參數
             ResultSet rs = stmt.executeQuery();
 
@@ -240,7 +236,7 @@ public class Machine
 
                 // 動態創建機台面板
                 JPanel machinePanel = createMachinePanel(machineCode, status, remainingTime, usage, lValue, cValue, hValue);
-             // 設置右鍵點擊的監聽器
+                // 設置右鍵點擊的監聽器
                 machinePanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
@@ -297,7 +293,6 @@ public class Machine
 
             rs.close();
             stmt.close();
-            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -308,10 +303,11 @@ public class Machine
     }
 	// 每秒減少剩餘時間
 	private void reduceRemainingTime() {
-	    try (Connection conn = DriverManager.getConnection(url, username, password)) {
+	    try
+	    {
 	        String sql = "UPDATE machine SET remaining_time = ADDTIME(remaining_time, '-00:00:01') " 
 	        			+"WHERE status IN ('工作中', '清洗') AND remaining_time > '00:00:00'";
-	        PreparedStatement stmt = conn.prepareStatement(sql);
+	        PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	        stmt.executeUpdate();
 	    } catch (Exception e) {
 	        e.printStackTrace();

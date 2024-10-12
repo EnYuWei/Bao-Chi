@@ -37,6 +37,8 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -63,11 +65,7 @@ public class Colour
     private JButton btnClear;
 //    private JButton btnSearch;
     private JComboBox<String> cbSorting;
-    //連接資料庫
-  	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-  	private String username = "root";
-  	private String password = "1234";
-  	private Timer timer;
+    
 	public Colour() 
 	{
 		// 主框架
@@ -174,11 +172,10 @@ public class Colour
 		tableModel = new DefaultTableModel();
 		try 
 		{
-		    Connection conn = DriverManager.getConnection(url, username, password);
 		    String sql = "SELECT `id` AS '色號', `name` AS '顏色', `L` AS 'L(明度)', `C` AS 'C(鮮豔度)', `H` AS 'H(色相)' "
 		    			+"FROM `color` "
 		    			+"ORDER BY `L`  DESC";
-		    PreparedStatement stmt = conn.prepareStatement(sql);
+		    PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 		    ResultSet rs = stmt.executeQuery();
 
 		    
@@ -211,7 +208,6 @@ public class Colour
 		        tableModel.addRow(rowData); // 將 rowData 添加到表格模型
 		    }
 
-		    conn.close();
 		    stmt.close();
 		    rs.close();
 		} 
@@ -490,27 +486,36 @@ public class Colour
 //        toolBar.add(btnSearch);
         toolBar.add(cbSorting);
         ColorManu.add(toolBar);
-        
-        timer = new Timer(300, new ActionListener() 
-        {
+        // 添加監聽器到各個元件
+        addTextFieldListener(tfColorID);
+        addTextFieldListener(tfColor);
+        addComboBoxListener(cbBrightness);
+        addComboBoxListener(cbVividness);
+        addComboBoxListener(cbSorting);
+	}
+	// 添加 JTextField 的 DocumentListener
+    private void addTextFieldListener(JTextField textField) {
+    	// 添加 DocumentListener 監聽輸入變化
+        textField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                updateTable();  // 每 5 秒執行一次更新表格操作
+            public void insertUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            	updateTable();
             }
         });
-	}
-	// 啟動計時器
-    public void startTimer() {
-        if (!timer.isRunning()) {
-            timer.start();
-        }
     }
-
-    // 停止計時器
-    public void stopTimer() {
-        if (timer.isRunning()) {
-            timer.stop();
-        }
+    // 添加 JComboBox 的 ActionListener
+    private void addComboBoxListener(JComboBox<String> comboBox) {
+        comboBox.addActionListener(e -> updateTable());
     }
 	// 更新表格
 	public void updateTable()
@@ -535,7 +540,6 @@ public class Colour
 	    
 	    try 
 	    {
-			Connection conn = DriverManager.getConnection(url, username, password);
 	
 			String sql =
 				    "SELECT "
@@ -561,7 +565,7 @@ public class Colour
 				   + "     END) "
 				   + sortRule;
 
-			PreparedStatement stmt = conn.prepareStatement(sql);
+			PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 
 			// 設定參數
 			stmt.setString(1, colorID);
@@ -605,7 +609,6 @@ public class Colour
 		        tableModel.addRow(rowData); // 將 rowData 添加到表格模型
 		    }
 
-		    conn.close();
 		    stmt.close();
 		    rs.close();
 		} 

@@ -2,6 +2,8 @@ package sms;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -58,18 +60,14 @@ public class Order
 	private JButton btnClear;
 	private JComboBox<String> cbSorting;
 	private JButton btnInsert;
-	
-	//連接資料庫
-	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-	private String username = "root";
-	private String password = "1234";
+
     //其他
     private DefaultTableModel tableModel;
     private JDatePickerImpl dpOrderStartDate ;
     private JDatePickerImpl dpOrderEndDate;
     private JDatePickerImpl dpDeliveryStartDate;
     private JDatePickerImpl dpDeliveryEndDate;
-    private Timer timer;
+
     private JLabel lblOrderTo;
     public Boolean canInsertOrder;
 	public Order() 
@@ -326,8 +324,6 @@ public class Order
         tableModel = new DefaultTableModel();
         try 
         {
-            Connection conn = DriverManager.getConnection(url, username, password);
-
             // 修改 SQL 查詢，連接 `order` 和 `client` 表來取得客戶名稱
             String sql = "SELECT "
 	                    + "    o.id AS '訂單編號', "
@@ -340,7 +336,7 @@ public class Order
 	                    + "GROUP BY o.id "
 	                    + "ORDER BY o.id DESC;";
             
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = Overview.conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             
             // 加入欄位
@@ -365,7 +361,6 @@ public class Order
             // 關閉資源
             rs.close();
             stmt.close();
-            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -633,35 +628,56 @@ public class Order
         toolBar.add(btnInsert);
         toolBar.add(btnClear);
         toolBar.add(cbSorting);
+        
+        // 添加監聽器到各個元件
+        addTextFieldListener(tfOrderID);
+        addTextFieldListener(tfClient);
+        addTextFieldListener(tfProductID);
 
-        // 定義計時器和時間間隔
-        timer = new Timer(300, new ActionListener() 
-        {  // 每200毫秒檢查一次條件並更新表格
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                updateTable();  
-            }
-        });
+        addComboBoxListener(cbProcessStatus);
+        addComboBoxListener(cbSorting);
 
-        // 啟動計時器
-        timer.start();
+        addDatePickerListener(dpOrderStartDate);
+        addDatePickerListener(dpOrderEndDate);
+        addDatePickerListener(dpDeliveryStartDate);
+        addDatePickerListener(dpDeliveryEndDate);
 
 	}
-	// 啟動計時器
-    public void startTimer() {
-        if (!timer.isRunning()) {
-            timer.start();
-        }
+	// 添加 JTextField 的 DocumentListener
+    private void addTextFieldListener(JTextField textField) {
+    	// 添加 DocumentListener 監聽輸入變化
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+        });
     }
 
-    // 停止計時器
-    public void stopTimer() {
-        if (timer.isRunning()) {
-            timer.stop();
-        }
+    // 添加 JComboBox 的 ActionListener
+    private void addComboBoxListener(JComboBox<String> comboBox) {
+        comboBox.addActionListener(e -> updateTable());
     }
 
+    // 添加 JDatePicker 的 PropertyChangeListener
+    private void addDatePickerListener(JDatePickerImpl datePicker) {
+        datePicker.addPropertyChangeListener("date", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                updateTable();
+            }
+        });
+    }
 	// 更新表格資料
 	private void updateTable()
 	{
@@ -699,7 +715,6 @@ public class Order
 	    }
 	    try 
 		{		 
-			 Connection conn = DriverManager.getConnection(url, username, password);
 			 //SQL 查詢語句
 			 String sql ="SELECT "
 	                    + "    o.id AS '訂單編號', "
@@ -730,7 +745,7 @@ public class Order
 	                    +"GROUP BY o.id "
 				 		+ sortRule;
 			 
-		     PreparedStatement stmt = conn.prepareStatement(sql);
+		     PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 		     stmt.setString(1, orderID);
 		     stmt.setString(2, "%" + orderID + "%"); // 設置帶有 % 的參數
 		     stmt.setString(3, status);
@@ -773,7 +788,6 @@ public class Order
 	         }
 		     table.setModel(tableModel);
 			 //關閉資源
-			 conn.close();
 			 stmt.close();
 	         rs.close();
 		} 

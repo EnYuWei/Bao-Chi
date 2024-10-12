@@ -43,10 +43,7 @@ public class ColourOperation
 	private JTextField tfH;
 	private JButton btnClose;
 	private JButton btnSave;
-	//連接資料庫
-	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-	private String username = "root";
-	private String password = "1234";
+	
 	// 沒傳參數 用於新增顏色資料
 	public ColourOperation() 
 	{
@@ -68,10 +65,9 @@ public class ColourOperation
 		        }
 		        try 
 		        {
-					Connection conn = DriverManager.getConnection(url, username, password);
 					String sql = "INSERT INTO color (id, name, L, C, H) "
 							   + "VALUES (?, ?, ?, ?, ?);";
-					PreparedStatement stmt = conn.prepareStatement(sql);	
+					PreparedStatement stmt = Overview.conn.prepareStatement(sql);	
 					
 					stmt.setString(1, colorID);
 					stmt.setString(2, color);
@@ -80,7 +76,6 @@ public class ColourOperation
 					stmt.setBigDecimal(5, new BigDecimal(h));
 					stmt.executeUpdate();
 					stmt.close();
-			        conn.close();
 			        frame.dispose();
 				} 
 		        catch (SQLException e1) 
@@ -118,13 +113,11 @@ public class ColourOperation
 		        	OptionPaneTool.showMessageDialog(JOptionPane.INFORMATION_MESSAGE, "L、C、H 不能為空值！", "了解");
 		        }
 		        try 
-		        {
-		            Connection conn = DriverManager.getConnection(url, username, password);
-		            
+		        {		            
 		            // 修改客戶資料的SQL語句
 		            String sql = "UPDATE color SET  name = ?, L = ?, C = ?, H = ? WHERE id = ?;";
 		            
-		            PreparedStatement stmt = conn.prepareStatement(sql);
+		            PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 		            stmt.setString(1, color);
 		            stmt.setString(2, l);
 		            stmt.setString(3, c);
@@ -133,7 +126,6 @@ public class ColourOperation
 		            
 		            stmt.executeUpdate();
 		            stmt.close();
-		            conn.close();
 		            
 		            // 關閉當前視窗
 		            frame.dispose();

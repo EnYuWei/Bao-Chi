@@ -37,6 +37,8 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -65,11 +67,7 @@ public class Product
     private JButton btnInsert;
     private JButton btnClear;
     private JComboBox<String> cbSorting;
-    //連接資料庫
-  	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-  	private String username = "root";
-  	private String password = "1234";
-  	private Timer timer;
+    
 	public Product() 
 	{
 		// 主框架
@@ -143,7 +141,6 @@ public class Product
 		tableModel = new DefaultTableModel();
 		try 
 		{
-		    Connection conn = DriverManager.getConnection(url, username, password);
 		    String sql = "SELECT "
 			            + 	"p.`id` AS '產品編號',"
 			            + 	"p.`color_id` AS '色號',"
@@ -157,7 +154,7 @@ public class Product
 			            + "GROUP BY p.`id` "
 			            + "ORDER BY p.`id` DESC;";
 
-		    PreparedStatement stmt = conn.prepareStatement(sql);
+		    PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 		    ResultSet rs = stmt.executeQuery();
 
 		    
@@ -185,7 +182,6 @@ public class Product
 		        tableModel.addRow(rowData); // 將 rowData 添加到表格模型
 		    }
 
-		    conn.close();
 		    stmt.close();
 		    rs.close();
 		} 
@@ -447,26 +443,31 @@ public class Product
         toolBar.add(cbSorting);
         ProductManu.add(toolBar);
         
-        timer = new Timer(300, new ActionListener() 
-        {
+        // 添加監聽器到各個元件
+        addTextFieldListener(tfProductID);
+        addTextFieldListener(tfColorID);
+        addTextFieldListener(tfYarnSpecification);
+        addTextFieldListener(tfSupplier);
+	}
+	// 添加 JTextField 的 DocumentListener
+    private void addTextFieldListener(JTextField textField) {
+    	// 添加 DocumentListener 監聽輸入變化
+        textField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                updateTable();  // 每 5 秒執行一次更新表格操作
+            public void insertUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            	updateTable();
             }
         });
-	}
-	// 啟動計時器
-    public void startTimer() {
-        if (!timer.isRunning()) {
-            timer.start();
-        }
-    }
-
-    // 停止計時器
-    public void stopTimer() {
-        if (timer.isRunning()) {
-            timer.stop();
-        }
     }
 	private void updateTable() 
 	{
@@ -496,7 +497,6 @@ public class Product
 	    
 	    try 
 	    {
-			Connection conn = DriverManager.getConnection(url, username, password);
 			 // 
 			String sql =  "SELECT "
 			            + "	   p.`id` AS '產品編號',"
@@ -515,7 +515,7 @@ public class Product
 			            + "    AND (CASE WHEN ? != '' THEN p.`suplier` LIKE ? ELSE TRUE END)"			          
 			            + "GROUP BY p.`id` "
 					    + sortRule;
-			PreparedStatement stmt = conn.prepareStatement(sql);
+			PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 			
 			stmt.setString(1, productID );
 			stmt.setString(2, "%" + productID + "%");
@@ -551,7 +551,6 @@ public class Product
 		          tableModel.addRow(rowData);
 		      }      
 			 //關閉資源
-			 conn.close();
 	         stmt.close();
 	         rs.close();
 		} 

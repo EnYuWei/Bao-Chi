@@ -38,6 +38,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -62,13 +64,8 @@ public class Client
     private JButton btnClear;
 //    private JButton btnSearch;
     private JComboBox<String> cbSorting;
-    //連接資料庫
-  	private String url = "jdbc:mariadb://localhost:3306/SchedulingManagementSystem";
-  	private String username = "root";
-  	private String password = "1234";
   	private JLabel lblAddress;
   	private JTextField tfAddress;
-  	private Timer timer;
   	
 	public Client() 
 	{
@@ -147,7 +144,6 @@ public class Client
         tableModel = new DefaultTableModel();
 		try 
 		{
-			 Connection conn = DriverManager.getConnection(url, username, password);
 			 // 
 			 String sql =
 				  "SELECT "
@@ -155,7 +151,7 @@ public class Client
 		 		+ "FROM "
 		 		+ "    `client`"
 		 		+ "ORDER BY client.id DESC;";
-			 PreparedStatement stmt = conn.prepareStatement(sql);
+			 PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 			 ResultSet rs = stmt.executeQuery();
 			       
 	         tableModel.addColumn("客戶編號");
@@ -180,7 +176,6 @@ public class Client
 		          tableModel.addRow(rowData);
 		      }      
 			 //關閉資源
-			 conn.close();
 	         stmt.close();
 	         rs.close();
 		} 
@@ -441,33 +436,43 @@ public class Client
         toolBar.add(cbSorting);
         ClientManu.add(toolBar);
         
-        timer = new Timer(300, new ActionListener() 
-        {
+        // 添加監聽器到各個元件
+        addTextFieldListener(tfClientID);
+        addTextFieldListener(tfClient);
+        addTextFieldListener(tfContactPerson);
+        addTextFieldListener(tfAddress);
+        addComboBoxListener(cbSorting);
+	}
+	// 添加 JTextField 的 DocumentListener
+    private void addTextFieldListener(JTextField textField) {
+    	// 添加 DocumentListener 監聽輸入變化
+        textField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                updateTable();  // 每 0.3 秒執行一次更新表格操作
+            public void insertUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	updateTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            	updateTable();
             }
         });
-	}
-	
-	// 啟動計時器
-    public void startTimer() {
-        if (!timer.isRunning()) {
-            timer.start();
-        }
+    }
+    // 添加 JComboBox 的 ActionListener
+    private void addComboBoxListener(JComboBox<String> comboBox) {
+        comboBox.addActionListener(e -> updateTable());
     }
 
-    // 停止計時器
-    public void stopTimer() {
-        if (timer.isRunning()) {
-            timer.stop();
-        }
-    }
 	public void updateTable()
 	{
 		String clientID = tfClientID.getText().trim();  
 	    String client = tfClient.getText().trim();    
-	    String contactPerson = tfClient.getText().trim();   
+	    String contactPerson =tfContactPerson.getText().trim();   
 	    String address = tfAddress.getText().trim(); 
 	    String sorting = (String) cbSorting.getSelectedItem();
 	    String sortRule="";
@@ -485,7 +490,6 @@ public class Client
 	    
 	    try 
 	    {
-			Connection conn = DriverManager.getConnection(url, username, password);
 			 // 
 			String sql =
 				    "SELECT "
@@ -498,7 +502,7 @@ public class Client
 				    + " AND (CASE WHEN ? != '' THEN client.`contact_person` LIKE ? ELSE TRUE END)"
 				    + " AND (CASE WHEN ? != '' THEN client.`address` LIKE ? ELSE TRUE END) "
 				    + sortRule;
-			PreparedStatement stmt = conn.prepareStatement(sql);
+			PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 			
 			stmt.setString(1, clientID );
 			stmt.setString(2, "%" + clientID + "%");
@@ -533,7 +537,6 @@ public class Client
 		          tableModel.addRow(rowData);
 		      }      
 			 //關閉資源
-			 conn.close();
 	         stmt.close();
 	         rs.close();
 		} 
