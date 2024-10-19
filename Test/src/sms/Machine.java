@@ -39,18 +39,19 @@ public class Machine
 		// 主框架
 		MachineManu = new JPanel();
 		MachineManu.setLayout(null);
-		
+		// 等比例縮放元件尺寸
+		LayoutScaler scaler = new LayoutScaler();
 		// 表格名稱
 		lblSchema = new JLabel("現場生產情形");
 		lblSchema.setFont(new Font("微軟正黑體", Font.BOLD, 36));
 		lblSchema.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSchema.setBounds(53, 52, 216, 67);
+		lblSchema.setBounds(scaler.scaleX(53), scaler.scaleY(52), scaler.scaleX(216), scaler.scaleY(67));
 		MachineManu.add(lblSchema);        
 		
 		// 卡片布局面板
         cardLayout = new CardLayout(0, 0);  // 初始化 CardLayout
         JPanel cardPanel = new JPanel(cardLayout);   
-        cardPanel.setBounds(53, 127, 1170, 400);
+        cardPanel.setBounds(scaler.scaleX(53), scaler.scaleY(127), scaler.scaleX(1170), scaler.scaleY(400));
         MachineManu.add(cardPanel);
         
         // 卡片A、B、C
@@ -62,7 +63,7 @@ public class Machine
         cardPanel.add(cardC, "C");
         // 按鈕面板
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setBounds(453, 540, 370, 50);
+        buttonPanel.setBounds(scaler.scaleX(453), scaler.scaleY(540), scaler.scaleX(370), scaler.scaleY(50));
         FlowLayout fl_buttonPanel = new FlowLayout();
         fl_buttonPanel.setHgap(20);
         buttonPanel.setLayout(fl_buttonPanel);
@@ -154,36 +155,36 @@ public class Machine
         // 稼動率
         JLabel lblOperationRate = new JLabel("稼動率: ");
         lblOperationRate.setFont(new Font("微軟正黑體", Font.BOLD, 14));
-        lblOperationRate.setBounds(927, 94, 100, 25);
+        lblOperationRate.setBounds(scaler.scaleX(927), scaler.scaleY(94), scaler.scaleX(100), scaler.scaleY(25));
         MachineManu.add(lblOperationRate);
         // 當日工作完成率
         JLabel lblDailyTaskCompletionRate = new JLabel("當日工作完成率: ");
         lblDailyTaskCompletionRate.setFont(new Font("微軟正黑體", Font.BOLD, 14));
-        lblDailyTaskCompletionRate.setBounds(1045, 94, 178, 25);
+        lblDailyTaskCompletionRate.setBounds(scaler.scaleX(1045), scaler.scaleY(94), scaler.scaleX(178), scaler.scaleY(25));
         MachineManu.add(lblDailyTaskCompletionRate);
         // 綠色燈號
         JLabel lblStatusTip1 = new JLabel(" 工作中");
         lblStatusTip1.setIcon(new ImageIcon("Img/circle-green.png"));
         lblStatusTip1.setFont(new Font("微軟正黑體", Font.PLAIN, 14));
-        lblStatusTip1.setBounds(883, 537, 64, 28);
+        lblStatusTip1.setBounds(scaler.scaleX(883), scaler.scaleY(537), scaler.scaleX(64), scaler.scaleY(28));
         MachineManu.add(lblStatusTip1);
         // 紅色燈號
         JLabel lblStatusTip2 = new JLabel(" 停機");
         lblStatusTip2.setIcon(new ImageIcon("Img/circle-red.png"));
         lblStatusTip2.setFont(new Font("微軟正黑體", Font.PLAIN, 14));
-        lblStatusTip2.setBounds(979, 537, 50, 28);
+        lblStatusTip2.setBounds(scaler.scaleX(979), scaler.scaleY(537), scaler.scaleX(50), scaler.scaleY(28));
         MachineManu.add(lblStatusTip2);
         // 黃色燈號
         JLabel lblStatusTip3 = new JLabel(" 待機");
         lblStatusTip3.setIcon(new ImageIcon("Img/circle-yellow.png"));
         lblStatusTip3.setFont(new Font("微軟正黑體", Font.PLAIN, 14));
-        lblStatusTip3.setBounds(883, 560, 50, 28);
+        lblStatusTip3.setBounds(scaler.scaleX(883), scaler.scaleY(560), scaler.scaleX(50), scaler.scaleY(28));
         MachineManu.add(lblStatusTip3);
         // 黃色燈號(閃爍)
         JLabel lblStatusTip4 = new JLabel("(閃爍) 清洗");
         lblStatusTip4.setIcon(new ImageIcon("Img/circle-yellow.png"));
         lblStatusTip4.setFont(new Font("微軟正黑體", Font.PLAIN, 14));
-        lblStatusTip4.setBounds(979, 560, 83, 28);
+        lblStatusTip4.setBounds(scaler.scaleX(979), scaler.scaleY(560), scaler.scaleX(83), scaler.scaleY(28));
         MachineManu.add(lblStatusTip4);
         // 定義計時器和時間間隔
         timer = new Timer(1000, new ActionListener() 

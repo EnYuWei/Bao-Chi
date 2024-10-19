@@ -1,5 +1,6 @@
 package sms;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -72,12 +73,13 @@ public class Client
 		// 主框架
 		ClientManu = new JPanel();
 		ClientManu.setLayout(null);
-		
+		// 等比例縮放元件尺寸
+		LayoutScaler scaler = new LayoutScaler();
 		// 表格名稱
 		lblSchema = new JLabel("客戶資料表");
 		lblSchema.setFont(new Font("微軟正黑體", Font.BOLD, 36));
 		lblSchema.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSchema.setBounds(53, 88, 185, 67);
+		lblSchema.setBounds(scaler.scaleX(53), scaler.scaleY(88), scaler.scaleX(185), scaler.scaleY(67));
 		ClientManu.add(lblSchema); 
 		
 		// 篩選條件面板
@@ -86,11 +88,11 @@ public class Client
 		    new Color(255, 255, 255), new Color(160, 160, 160)), "篩選條件", 
 		    TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 
-		panelSearchCondition.setBounds(304, 88, 908, 88);
+		panelSearchCondition.setBounds(scaler.scaleX(304), scaler.scaleY(88), scaler.scaleX(908), scaler.scaleX(88));
 		panelSearchCondition.setLayout(null);
 		ClientManu.add(panelSearchCondition);
 		JPanel panelClientCondition = new JPanel();
-		panelClientCondition.setBounds(10, 22, 888, 55);  // 設置面板的位置和大小
+		panelClientCondition.setBounds(scaler.scaleX(10), scaler.scaleY(22), scaler.scaleX(888), scaler.scaleY(55));  // 設置面板的位置和大小
 		panelClientCondition.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));  // 使用 FlowLayout 排版
 		panelSearchCondition.add(panelClientCondition);
 
@@ -297,11 +299,11 @@ public class Client
 
 
         scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(80, 266, 1132, 310);
+        scrollPane.setBounds(scaler.scaleX(80), scaler.scaleY(266), scaler.scaleX(1132), scaler.scaleY(310));
         ClientManu.add(scrollPane);
         //工具列
         toolBar = new JToolBar("工具列");
-        toolBar.setBounds(80, 236, 172, 30);
+        toolBar.setBounds(scaler.scaleX(80), scaler.scaleY(236), scaler.scaleX(172), scaler.scaleY(30));
         
         
         ImageIcon iconInsert = new ImageIcon("Img/plus.png");
@@ -551,6 +553,10 @@ public class Client
 	// 回傳主框架(之後要添加於選項卡)
 	public JPanel getPanel() 
 	{
-        return ClientManu;
+		// 將絕對定位的面板放入一個中心面板
+        JPanel centeredPanel = new JPanel();
+        centeredPanel.setLayout(new BorderLayout()); // 使用 BorderLayout
+        centeredPanel.add(ClientManu, BorderLayout.CENTER); // 將 OrderManu 添加到中心位置
+        return centeredPanel;
     }
 }

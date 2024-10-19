@@ -34,6 +34,7 @@ import javax.swing.border.EtchedBorder;
 
 import java.awt.FlowLayout;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.RenderingHints;
 
 public class Order 
@@ -76,12 +77,13 @@ public class Order
 		// 主框架
 		OrderManu = new JPanel();
 		OrderManu.setLayout(null);
-
+		// 等比例縮放元件尺寸
+		LayoutScaler scaler = new LayoutScaler();
 		// 表格名稱
 		lblSchema = new JLabel("訂單紀錄表");
 		lblSchema.setFont(new Font("微軟正黑體", Font.BOLD, 36));
 		lblSchema.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSchema.setBounds(53, 88, 185, 67);
+		lblSchema.setBounds(scaler.scaleX(53), scaler.scaleY(88),scaler.scaleX(185), scaler.scaleY(67));
 		OrderManu.add(lblSchema);        
 
 		// 篩選條件面板
@@ -90,36 +92,36 @@ public class Order
 		    new Color(255, 255, 255), new Color(160, 160, 160)), "篩選條件", 
 		    TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 
-		panelSearchCondition.setBounds(293, 46, 919, 192);
+		panelSearchCondition.setBounds(scaler.scaleX(293), scaler.scaleY(46), scaler.scaleX(919), scaler.scaleY(192));
 		OrderManu.add(panelSearchCondition);
 		panelSearchCondition.setLayout(null);
 
 		// 上半部 (訂單條件)
 		JPanel panelOrderCondition = new JPanel();
-		panelOrderCondition.setBounds(10, 21, 885, 114);
+		panelOrderCondition.setBounds(scaler.scaleX(10), scaler.scaleY(21), scaler.scaleX(885), scaler.scaleY(114));
 		panelSearchCondition.add(panelOrderCondition);
 		panelOrderCondition.setLayout(null);
 
 		// 訂單編號
 		lblOrderID = new JLabel("訂單編號:");
-		lblOrderID.setBounds(10, 14, 68, 23);
+		lblOrderID.setBounds(scaler.scaleX(10), scaler.scaleY(14), scaler.scaleX(68), scaler.scaleY(23));
 		lblOrderID.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		panelOrderCondition.add(lblOrderID);
 
 		tfOrderID = new JTextField();
-		tfOrderID.setBounds(88, 13, 136, 25);
+		tfOrderID.setBounds(scaler.scaleX(120), scaler.scaleY(14), scaler.scaleX(136), scaler.scaleY(25));
 		tfOrderID.setFont(new Font("Arial", Font.PLAIN, 16));
 		tfOrderID.setColumns(10);
 		panelOrderCondition.add(tfOrderID);
 		
 		// 處理狀態
-		lblProcessStatus = new JLabel("處理狀態:");
-		lblProcessStatus.setBounds(243, 14, 68, 23);
+		lblProcessStatus = new JLabel("狀態:");
+		lblProcessStatus.setBounds(scaler.scaleX(296), scaler.scaleY(14), scaler.scaleX(36), scaler.scaleY(23));
 		panelOrderCondition.add(lblProcessStatus);
 		lblProcessStatus.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 
 		cbProcessStatus = new JComboBox<String>();
-		cbProcessStatus.setBounds(321, 10, 91, 31);
+		cbProcessStatus.setBounds(scaler.scaleX(353), scaler.scaleY(10), scaler.scaleX(91), scaler.scaleY(31));
 		panelOrderCondition.add(cbProcessStatus);
 		cbProcessStatus.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		cbProcessStatus.setBackground(Color.WHITE);
@@ -139,19 +141,19 @@ public class Order
 		
 		// 客戶
 		lblClient = new JLabel("客戶:");
-		lblClient.setBounds(426, 14, 36, 23);
+		lblClient.setBounds(scaler.scaleX(525), scaler.scaleY(14), scaler.scaleX(36), scaler.scaleY(23));
 		lblClient.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		panelOrderCondition.add(lblClient);
 
 		tfClient = new JTextField();
-		tfClient.setBounds(472, 11, 156, 29);
+		tfClient.setBounds(scaler.scaleX(582), scaler.scaleY(11), scaler.scaleX(156), scaler.scaleY(29));
 		tfClient.setFont(new Font("微軟正黑體", Font.PLAIN, 16));
 		tfClient.setColumns(10);
 		panelOrderCondition.add(tfClient);
 
 		// 下單日期
 		lblOrderDate = new JLabel("下單日期:");
-		lblOrderDate.setBounds(10, 51, 100, 23);
+		lblOrderDate.setBounds(scaler.scaleX(10), scaler.scaleY(51), scaler.scaleX(100), scaler.scaleY(23));
 		lblOrderDate.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		panelOrderCondition.add(lblOrderDate);
 		// 下單日期開始選擇器
@@ -159,7 +161,7 @@ public class Order
 		Properties orderStartDateProperties = new Properties();
 		JDatePanelImpl datePanelOrderStart = new JDatePanelImpl(dmOrderStartDate, orderStartDateProperties);
 		dpOrderStartDate = new JDatePickerImpl(datePanelOrderStart, null);
-		dpOrderStartDate.setBounds(120, 51, 202, 23);
+		dpOrderStartDate.setBounds(scaler.scaleX(120), scaler.scaleY(51), scaler.scaleX(163), scaler.scaleY(23));
 		dpOrderStartDate.getJFormattedTextField().setBackground(new Color(255, 255, 255));
 		dpOrderStartDate.getJFormattedTextField().setHorizontalAlignment(SwingConstants.CENTER);
 		dpOrderStartDate.getJFormattedTextField().setFont(new Font("Arial", Font.BOLD, 14));
@@ -169,7 +171,7 @@ public class Order
 		
 		// ~
 		lblOrderTo = new JLabel("~");
-		lblOrderTo.setBounds(332, 51, 12, 23);
+		lblOrderTo.setBounds(scaler.scaleX(296), scaler.scaleY(51), scaler.scaleX(12), scaler.scaleY(23));
 		lblOrderTo.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		panelOrderCondition.add(lblOrderTo);
 		
@@ -178,7 +180,7 @@ public class Order
 		Properties orderEndDateProperties = new Properties();
 		JDatePanelImpl datePanelOrderEnd = new JDatePanelImpl(dmOrderEndDate, orderEndDateProperties);
 		dpOrderEndDate = new JDatePickerImpl(datePanelOrderEnd, null);
-		dpOrderEndDate.setBounds(354, 51, 202, 23);
+		dpOrderEndDate.setBounds(scaler.scaleX(328), scaler.scaleY(51), scaler.scaleX(163), scaler.scaleY(23));
 		dpOrderEndDate.getJFormattedTextField().setBackground(new Color(255, 255, 255));
 		dpOrderEndDate.getJFormattedTextField().setHorizontalAlignment(SwingConstants.CENTER);
 		dpOrderEndDate.getJFormattedTextField().setFont(new Font("Arial", Font.BOLD, 14));
@@ -197,14 +199,14 @@ public class Order
 		        super.paintComponent(g2);
 		    }
 		};
-		separator.setBounds(10, 141, 885, 2);
+		separator.setBounds(scaler.scaleX(10), scaler.scaleY(141), scaler.scaleX(885), scaler.scaleY(2));
 		separator.setBackground(Color.DARK_GRAY);
 		panelSearchCondition.add(separator);
 
 
 		// 交貨日期
 		lblDeliveryDate = new JLabel("預計交貨日期:");
-		lblDeliveryDate.setBounds(10, 84, 100, 23);
+		lblDeliveryDate.setBounds(scaler.scaleX(10), scaler.scaleY(84), scaler.scaleX(100), scaler.scaleY(23));
 		lblDeliveryDate.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		panelOrderCondition.add(lblDeliveryDate);
 		
@@ -214,7 +216,7 @@ public class Order
 		Properties deliveryStartDateProperties = new Properties();
 		JDatePanelImpl datePanelDeliveryStart = new JDatePanelImpl(dmDeliveryStartDate, deliveryStartDateProperties);
 		dpDeliveryStartDate = new JDatePickerImpl(datePanelDeliveryStart, null);
-		dpDeliveryStartDate.setBounds(120, 84, 202, 23);
+		dpDeliveryStartDate.setBounds(scaler.scaleX(120), scaler.scaleY(84), scaler.scaleX(163), scaler.scaleY(23));
 		panelOrderCondition.add(dpDeliveryStartDate);
 		dpDeliveryStartDate.getJFormattedTextField().setBackground(new Color(255, 255, 255));
 		dpDeliveryStartDate.getJFormattedTextField().setHorizontalAlignment(SwingConstants.CENTER);
@@ -224,7 +226,7 @@ public class Order
 
 		// ~
 		lblDeliveryTo = new JLabel("~");
-		lblDeliveryTo.setBounds(332, 84, 12, 23);
+		lblDeliveryTo.setBounds(scaler.scaleX(296), scaler.scaleY(84), scaler.scaleX(12), scaler.scaleY(23));
 		panelOrderCondition.add(lblDeliveryTo);
 		lblDeliveryTo.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		
@@ -234,7 +236,7 @@ public class Order
 		JDatePanelImpl datePanelDeliveryEnd = new JDatePanelImpl(dmDeliveryEndDate, deliveryEndDateProperties);
 		
 		dpDeliveryEndDate =  new JDatePickerImpl(datePanelDeliveryEnd, null);
-		dpDeliveryEndDate.setBounds(354, 84, 202, 23);
+		dpDeliveryEndDate.setBounds(scaler.scaleX(328), scaler.scaleY(84), scaler.scaleX(163), scaler.scaleY(23));
 		dpDeliveryEndDate.getJFormattedTextField().setBackground(new Color(255, 255, 255));
 		dpDeliveryEndDate.getJFormattedTextField().setHorizontalAlignment(SwingConstants.CENTER);
 		dpDeliveryEndDate.getJFormattedTextField().setFont(new Font("Arial", Font.BOLD, 14));
@@ -276,16 +278,18 @@ public class Order
 		dmDeliveryEndDate.addPropertyChangeListener(dateChangeListener);
 		// 下半部 (品項條件)
 		JPanel panelProductCondition = new JPanel();
-		panelProductCondition.setBounds(10, 141, 885, 41);
-		panelProductCondition.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));  // 使用 FlowLayout 排版
+		panelProductCondition.setBounds(scaler.scaleX(10), scaler.scaleY(141), scaler.scaleX(885), scaler.scaleY(41));
 		panelSearchCondition.add(panelProductCondition);
+		panelProductCondition.setLayout(null);
 
 		// 產品編號
 		lblProductID = new JLabel("包含產品:");
+		lblProductID.setBounds(scaler.scaleX(10), scaler.scaleY(13), scaler.scaleX(68), scaler.scaleY(23));
 		lblProductID.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 		panelProductCondition.add(lblProductID);
 		//
 		tfProductID = new JTextField();
+		tfProductID.setBounds(scaler.scaleX(120), scaler.scaleY(10), scaler.scaleX(156), scaler.scaleY(29));
 		tfProductID.setFont(new Font("微軟正黑體", Font.PLAIN, 16));
 		tfProductID.setColumns(10);
 		panelProductCondition.add(tfProductID);
@@ -413,7 +417,7 @@ public class Order
                     String status = table.getValueAt(row, 1) != null ? table.getValueAt(row, 1).toString() : ""; // 檢查狀態
                     String etaString = table.getValueAt(row, 4) != null ? table.getValueAt(row, 4).toString() : ""; // 檢查交期
 
-                    if (!etaString.equals("") && !status.equals("已完成")) 
+                    if (!etaString.equals("") && (!status.equals("已完成") || !status.equals("取消"))) 
                     {
                     	// 如果預計交貨日期距今天5天到期，而且狀態不是已完成，將交期設為紅色。
                         try {
@@ -508,12 +512,12 @@ public class Order
         });
 
         scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(80, 266, 1132, 310);
+        scrollPane.setBounds(scaler.scaleX(80), scaler.scaleY(266), scaler.scaleX(1132), scaler.scaleY(310));
         OrderManu.add(scrollPane);
 
         //工具列
         toolBar = new JToolBar("工具列");
-        toolBar.setBounds(80, 236, 172, 30);
+        toolBar.setBounds(scaler.scaleX(80), scaler.scaleY(236), scaler.scaleX(172), scaler.scaleY(30));
         OrderManu.add(toolBar);
         //圖示
         ImageIcon iconRefresh = new ImageIcon("Img/eraser.png");
@@ -641,7 +645,7 @@ public class Order
         addDatePickerListener(dpOrderEndDate);
         addDatePickerListener(dpDeliveryStartDate);
         addDatePickerListener(dpDeliveryEndDate);
-
+        
 	}
 	// 添加 JTextField 的 DocumentListener
     private void addTextFieldListener(JTextField textField) {
@@ -800,7 +804,11 @@ public class Order
 	// 回傳主框架(之後要添加於選項卡)
 	public JPanel getPanel() 
 	{
-        return OrderManu;
+        // 將絕對定位的面板放入一個中心面板
+        JPanel centeredPanel = new JPanel();
+        centeredPanel.setLayout(new BorderLayout()); // 使用 BorderLayout
+        centeredPanel.add(OrderManu, BorderLayout.CENTER); // 將 OrderManu 添加到中心位置
+        return centeredPanel;
     }
 }
 

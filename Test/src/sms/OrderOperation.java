@@ -184,7 +184,7 @@ public class OrderOperation
         try 
 	    {	        
 	        // SQL 查詢語句
-	        String sql = "SELECT `id` FROM product";
+	        String sql = "SELECT `id` FROM product ORDER BY id";
 	        PreparedStatement stmt = Overview.conn.prepareStatement(sql);
 	        ResultSet rs = stmt.executeQuery();
 	        allProductID.add("");
@@ -354,7 +354,7 @@ public class OrderOperation
 	                return;
 	            }
 	            // 打印過濾後的資料
-	            filteredDataList.forEach(row -> System.out.println(Arrays.toString(row)));
+//	            filteredDataList.forEach(row -> System.out.println(Arrays.toString(row)));
 	            
 	            // 新增至資料庫
 	            try 
@@ -696,7 +696,7 @@ public class OrderOperation
 	            }
 
 	            // 打印過濾後的資料
-	            filteredDataList.forEach(row -> System.out.println(Arrays.toString(row)));
+//	            filteredDataList.forEach(row -> System.out.println(Arrays.toString(row)));
 	            
 	            // 新增至資料庫
 	            try 
@@ -840,8 +840,7 @@ public class OrderOperation
     	        {
     	        	cbProcessStatus.setSelectedItem("待拋轉");
     	        	btnSave.doClick();  // 模擬按下 "儲存" 按鈕
-    	        	frame.revalidate(); // 重新驗證佈局管理器
-    	        	frame.repaint(); // 重新繪製元件
+    	        	frame.dispose();
     	        }
     	    });
         	// 取消按鈕
@@ -856,8 +855,7 @@ public class OrderOperation
     	        {
     	        	cbProcessStatus.setSelectedItem("取消");
     	        	btnSave.doClick();  // 模擬按下 "新增" 按鈕
-    	        	frame.revalidate(); // 重新驗證佈局管理器
-    	        	frame.repaint(); // 重新繪製元件
+    	        	frame.dispose();
     	        }
     	    });
         	buttonPanel.add(btnSave);
@@ -883,8 +881,7 @@ public class OrderOperation
     	        {
     	        	cbProcessStatus.setSelectedItem("草稿");
     	        	btnSave.doClick();  // 模擬按下 "新增" 按鈕
-    	        	frame.revalidate(); // 重新驗證佈局管理器
-    	        	frame.repaint(); // 重新繪製元件
+    	        	frame.dispose();
     	        }
     	    });
     	    buttonPanel.add(btnWithDraw);
@@ -991,7 +988,7 @@ public class OrderOperation
 	    gbcOrderInfo.fill = GridBagConstraints.BOTH;  // 水平和垂直填滿
 	    // 訂單編號
 	    lblOrderID = new JLabel("訂單編號");
-	    lblOrderID.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblOrderID.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 0; 
 	    gbcOrderInfo.weightx = 0.4;
@@ -999,7 +996,7 @@ public class OrderOperation
 	    panelOrderInformation.add(lblOrderID,gbcOrderInfo);
 	    //
 	    tfOrderID = new JTextField();
-	    tfOrderID.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfOrderID.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    tfOrderID.setEditable(false);
 	    tfOrderID.setColumns(10);
 	    gbcOrderInfo.gridx = 1; 
@@ -1009,13 +1006,13 @@ public class OrderOperation
 	    panelOrderInformation.add(tfOrderID,gbcOrderInfo);
 	    // 處理狀態
 	    lblProcessStatus = new JLabel("處理狀態");
-	    lblProcessStatus.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblProcessStatus.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 1; 
 	    panelOrderInformation.add(lblProcessStatus,gbcOrderInfo);
 	    //
 	    cbProcessStatus = new JComboBox<String>();
-	    cbProcessStatus.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    cbProcessStatus.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    cbProcessStatus.setBackground(Color.WHITE);
 	    cbProcessStatus.setFocusable(false);
 		cbProcessStatus.addItem("草稿");
@@ -1024,7 +1021,7 @@ public class OrderOperation
 	    panelOrderInformation.add(cbProcessStatus,gbcOrderInfo);	  
 	    // 下單日期
 	    lblOrderDate = new JLabel("下單日期");
-	    lblOrderDate.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblOrderDate.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 2; 
 	    panelOrderInformation.add(lblOrderDate,gbcOrderInfo);
@@ -1032,32 +1029,32 @@ public class OrderOperation
 	    tfOrderDate = new JTextField();
 	    tfOrderDate.setColumns(10);
 	    tfOrderDate.setEditable(false);
-	    tfOrderDate.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfOrderDate.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 1; 
 	    gbcOrderInfo.gridy = 2; 
 	    panelOrderInformation.add(tfOrderDate,gbcOrderInfo);
 	    // 銷售人員
-	    lblSales = new JLabel("<html>銷售人員<font color='red'>*</font></html>");
-	    lblSales.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblSales = new JLabel("<html><nobr>銷售人員<font color='red'>*</font></nobr></html>");
+	    lblSales.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 3; 
 	    panelOrderInformation.add(lblSales,gbcOrderInfo);
 	    //
 	    tfSales = new JTextField();
-	    tfSales.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfSales.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    tfSales.setColumns(10);
 	    gbcOrderInfo.gridx = 1; 
 	    gbcOrderInfo.gridy = 3; 
 	    panelOrderInformation.add(tfSales,gbcOrderInfo);
 	    // 應付金額
 	    lblAmountPayable = new JLabel("應付金額");
-	    lblAmountPayable.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblAmountPayable.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 4; 
 	    panelOrderInformation.add(lblAmountPayable,gbcOrderInfo);
 	    //
 	    tfAmountPayable = new JTextField();
-	    tfAmountPayable.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfAmountPayable.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    tfAmountPayable.setColumns(10);
 	    // 自訂 InputVerifier，檢查應付金額格式
 	    tfAmountPayable.setInputVerifier(new InputVerifier() 
@@ -1095,8 +1092,8 @@ public class OrderOperation
 	    gbcOrderInfo.gridy = 4; 
 	    panelOrderInformation.add(tfAmountPayable,gbcOrderInfo);
 	    // 預計交貨日期
-	    lblETA = new JLabel("<html>預計交貨日期<font color='red'>*</font></html>");
-	    lblETA.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblETA = new JLabel("<html><nobr>預計交貨日期<font color='red'>*</font></nobr></html>");
+	    lblETA.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 5; 
 	    panelOrderInformation.add(lblETA,gbcOrderInfo);
@@ -1115,7 +1112,7 @@ public class OrderOperation
 		panelOrderInformation.add(dpETA,gbcOrderInfo);
 	    //
 	    lblATA = new JLabel("實際交貨日期");
-	    lblATA.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblATA.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 6; 
 	    panelOrderInformation.add(lblATA,gbcOrderInfo);
@@ -1161,13 +1158,13 @@ public class OrderOperation
 		dmATA.addPropertyChangeListener(dateChangeListener);
 	    // 出貨地址
 	    lblDeliveryAddress = new JLabel("出貨地址");
-	    lblDeliveryAddress.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblDeliveryAddress.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcOrderInfo.gridx = 0; 
 	    gbcOrderInfo.gridy = 7; 
 	    panelOrderInformation.add(lblDeliveryAddress,gbcOrderInfo);
 	    //
 	    taDeliveryAddress = new JTextArea(3, 30);
-	    taDeliveryAddress.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    taDeliveryAddress.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    taDeliveryAddress.setLineWrap(true);  // 自動換行
 	    taDeliveryAddress.setWrapStyleWord(true);
 	    gbcOrderInfo.gridx = 1; 
@@ -1192,7 +1189,7 @@ public class OrderOperation
 	    gbcClientInfo.fill = GridBagConstraints.BOTH;  // 水平和垂直填滿
 	    // 代訂廠商
 	    lblMiddlemen = new JLabel("代訂廠商"); 
-	    lblMiddlemen.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblMiddlemen.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 0; 
 	    gbcClientInfo.gridy = 0; 
 	    gbcClientInfo.weightx = 0.4; // 控制水平權重（可調整）
@@ -1201,15 +1198,15 @@ public class OrderOperation
 	    //
 	    tfMiddlemen = new JTextField();
 	    tfMiddlemen.setColumns(10);
-	    tfMiddlemen.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfMiddlemen.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 1; 
 	    gbcClientInfo.gridy = 0; 
 	    gbcClientInfo.weightx = 0.6; // 控制水平權重（可調整）
 	    gbcClientInfo.weighty = 0.2; // 控制垂直權重（調整這個來控制高度）
 	    panelClientInformation.add(tfMiddlemen,gbcClientInfo);
 	    // 客戶編號
-	    lblClientID = new JLabel("<html>客戶編號<font color='red'>*</font></html>");
-	    lblClientID.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblClientID = new JLabel("<html><nobr>客戶編號<font color='red'>*</font></nobr></html>");
+	    lblClientID.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 0; 
 	    gbcClientInfo.gridy = 1; 
 	    panelClientInformation.add(lblClientID,gbcClientInfo);
@@ -1275,7 +1272,7 @@ public class OrderOperation
 	    cbClientID.setBackground(Color.WHITE);
 	    cbClientID.setFocusable(false);
 	    cbClientID.setMaximumRowCount(8);  // 設置最多顯示 8 行
-	    cbClientID.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    cbClientID.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    // 根據所選項目 自動填入相關欄位
 	    cbClientID.addActionListener(new ActionListener() 
 	    {
@@ -1328,39 +1325,39 @@ public class OrderOperation
 	    panelClientInformation.add(cbClientID,gbcClientInfo);
 	    // 統一編號
 	    lblUnifiedNumber = new JLabel("統一編號");
-	    lblUnifiedNumber.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblUnifiedNumber.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 0; 
 	    gbcClientInfo.gridy = 2; 
 	    panelClientInformation.add(lblUnifiedNumber,gbcClientInfo);   
 	    //
 	    tfUnifiedNumber = new JTextField();
-	    tfUnifiedNumber.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfUnifiedNumber.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    tfUnifiedNumber.setEditable(false);
 	    gbcClientInfo.gridx = 1; 
 	    gbcClientInfo.gridy = 2; 
 	    panelClientInformation.add(tfUnifiedNumber,gbcClientInfo);
 	    // 客戶
 	    lblClient = new JLabel("客戶");
-	    lblClient.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblClient.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 0; 
 	    gbcClientInfo.gridy = 3; 
 	    panelClientInformation.add(lblClient,gbcClientInfo);
 	    //
 	    tfClient = new JTextField();
 	    tfClient.setEditable(false);
-	    tfClient.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfClient.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 1; 
 	    gbcClientInfo.gridy = 3; 
 	    panelClientInformation.add(tfClient,gbcClientInfo);
 	    // 聯絡人
 	    lblContactPerson = new JLabel("聯絡人");
-	    lblContactPerson.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblContactPerson.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 0; 
 	    gbcClientInfo.gridy = 4; 
 	    panelClientInformation.add(lblContactPerson,gbcClientInfo);
 	    //
 	    tfContactPerson = new JTextField();
-	    tfContactPerson.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfContactPerson.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    tfContactPerson.setEditable(false);
 	    gbcClientInfo.gridx = 1; 
 	    gbcClientInfo.gridy = 4; 
@@ -1373,27 +1370,27 @@ public class OrderOperation
 	    panelClientInformation.add(lblContactPhone,gbcClientInfo);
 	    //
 	    tfContactPhone = new JTextField();
-	    tfContactPhone.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfContactPhone.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    tfContactPhone.setEditable(false);
 	    gbcClientInfo.gridx = 1; 
 	    gbcClientInfo.gridy = 5; 
 	    panelClientInformation.add(tfContactPhone,gbcClientInfo);
 	    // Email
 	    lblEmail = new JLabel("Email");
-	    lblEmail.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblEmail.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 0; 
 	    gbcClientInfo.gridy = 6; 
 	    panelClientInformation.add(lblEmail,gbcClientInfo);
 	    //
 	    tfEmail = new JTextField();
-	    tfEmail.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    tfEmail.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    tfEmail.setEditable(false);
 	    gbcClientInfo.gridx = 1; 
 	    gbcClientInfo.gridy = 6; 
 	    panelClientInformation.add(tfEmail,gbcClientInfo);
 	    // 地址
 	    lblAddress = new JLabel("地址");
-	    lblAddress.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    lblAddress.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    gbcClientInfo.gridx = 0; 
 	    gbcClientInfo.gridy = 7; 
 	    panelClientInformation.add(lblAddress,gbcClientInfo);
@@ -1402,7 +1399,7 @@ public class OrderOperation
 	    taAddress.setEditable(false);
 	    taAddress.setWrapStyleWord(true);
 	    taAddress.setLineWrap(true);
-	    taAddress.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+	    taAddress.setFont(new Font("微軟正黑體", Font.BOLD, 16));
 	    taAddress.setBackground(new Color(220,220,220));
 	    gbcClientInfo.gridx = 1; 
 	    gbcClientInfo.gridy = 7; 
