@@ -1,5 +1,6 @@
 package sms;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -74,15 +75,13 @@ public class Product
 		ProductManu = new JPanel();
 		ProductManu.setLayout(null);
 		
-		// 主框架
-		ProductManu = new JPanel();
-		ProductManu.setLayout(null);
-		
+		// 等比例縮放元件尺寸
+		LayoutScaler scaler = new LayoutScaler();
 		// 表格名稱
 		lblSchema = new JLabel("產品資訊表");
 		lblSchema.setFont(new Font("微軟正黑體", Font.BOLD, 36));
 		lblSchema.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSchema.setBounds(53, 88, 185, 67);
+		lblSchema.setBounds(scaler.scaleX(53), scaler.scaleY(88), scaler.scaleX(185), scaler.scaleY(67));
 		ProductManu.add(lblSchema); 
 		
 		// 篩選條件面板
@@ -91,11 +90,11 @@ public class Product
 		    new Color(255, 255, 255), new Color(160, 160, 160)), "篩選條件", 
 		    TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 
-		panelSearchCondition.setBounds(304, 88, 946, 88);
+		panelSearchCondition.setBounds(scaler.scaleX(304), scaler.scaleY(88), scaler.scaleX(946), scaler.scaleY(88));
 		panelSearchCondition.setLayout(null);
 		ProductManu.add(panelSearchCondition);
 		JPanel panelProductCondition = new JPanel();
-		panelProductCondition.setBounds(10, 22, 926, 55);  // 設置面板的位置和大小
+		panelProductCondition.setBounds(scaler.scaleX(10), scaler.scaleY(22), scaler.scaleX(926), scaler.scaleY(55));  // 設置面板的位置和大小
 		panelProductCondition.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));  // 使用 FlowLayout 排版
 		panelSearchCondition.add(panelProductCondition);
 
@@ -303,11 +302,11 @@ public class Product
 
 
         scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(80, 266, 1132, 310);
+        scrollPane.setBounds(scaler.scaleX(80), scaler.scaleY(266), scaler.scaleX(1132), scaler.scaleY(310));
         ProductManu.add(scrollPane);
         //工具列
         toolBar = new JToolBar("工具列");
-        toolBar.setBounds(80, 236, 172, 30);
+        toolBar.setBounds(scaler.scaleX(80), scaler.scaleY(236), scaler.scaleX(172), scaler.scaleY(30));
         
         
         ImageIcon iconInsert = new ImageIcon("Img/plus.png");
@@ -565,6 +564,10 @@ public class Product
 	// 回傳主框架(之後要添加於選項卡)
 	public JPanel getPanel() 
 	{
-        return ProductManu;
+		// 將絕對定位的面板放入一個中心面板
+        JPanel centeredPanel = new JPanel();
+        centeredPanel.setLayout(new BorderLayout()); // 使用 BorderLayout
+        centeredPanel.add(ProductManu, BorderLayout.CENTER); // 將 OrderManu 添加到中心位置
+        return centeredPanel;
     }
 }
